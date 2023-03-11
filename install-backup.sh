@@ -37,7 +37,7 @@ chmod +x $INSTALL_DIR/raspberry-pi-backup/ext/dd
 
 # copy mount.cifs if missing on system (like on Venus OS)
 if [ ! -f "/sbin/mount.cifs" ]; then
-    cp $INSTALL_DIR/ext/mount.cifs /sbin
+    cp $INSTALL_DIR/raspberry-pi-backup/ext/mount.cifs /sbin
     chmod +x /sbin/mount.cifs
     chmod u+s /sbin/mount.cifs
 fi

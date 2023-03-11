@@ -29,7 +29,7 @@ BACKUP_HOSTNAME="$(hostname)"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BACKUP_MOUNT="/mnt/backup"
-BACKUP_PATH="$BACKUP_MOUNT/$BACKUP_SUBFOLDER/$BACKUP_HOSTNAME"
+BACKUP_PATH="$BACKUP_MOUNT/$BACKUP_SUBFOLDER$BACKUP_HOSTNAME"
 BACKUP_NAME="Backup_$BACKUP_HOSTNAME"
 
 # create mount dir if not exists
@@ -46,16 +46,16 @@ if [ ! -d $BACKUP_PATH ]; then
 fi
 
 # check if dd is a symlink like in busybox
-if [[ ! -L "/bin/dd" ]]
+if [[ -L "/bin/dd" ]] || [[ -f "/opt/victronenergy/version" ]]
 # if not use the system dd
 then
     # create backup
-    dd if=/dev/mmcblk0 of=${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img bs=1MB status=progress
+    $SCRIPT_DIR/ext/dd if=/dev/mmcblk0 of=${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img bs=1MB status=progress
 
 # if yes then probably the argument "status=progress" will not work, use own dd
 else
     # create backup
-    $SCRIPT_DIR/ext/dd if=/dev/mmcblk0 of=${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img bs=1MB status=progress
+    dd if=/dev/mmcblk0 of=${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img bs=1MB status=progress
 fi
 
 
