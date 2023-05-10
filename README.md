@@ -54,3 +54,10 @@ Run the script directly and check the output.
 ### Restore SD card
 
 Turn off the Raspberry Pi, remove the SD card and insert it in your computer. Write the backup image file to the SD card with [Balena Etcher](https://github.com/balena-io/etcher) or the tool you prefer.
+
+
+## Supporting/Sponsoring this project
+
+You like the project and you want to support me?
+
+[<img src="https://github.md0.eu/uploads/donate-button.svg" height="50">](https://www.paypal.com/donate/?hosted_button_id=3NEVZBDM5KABW)
