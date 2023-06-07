@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# script version 0.0.1 (2023.03.09)
+# script version 0.0.2 (2023.06.07)
+
+# uncomment for debugging
+#set -x
 
 ################## CONFIG | START ##################
 # specify the remote mount
@@ -40,9 +43,14 @@ fi
 # mount harddisk
 mount -t cifs -o user=$BACKUP_REMOTE_MOUNT_USER,password=$BACKUP_REMOTE_MOUNT_PW,rw,file_mode=0777,dir_mode=0777 $BACKUP_REMOTE_MOUNT $BACKUP_MOUNT
 
+if [ $? -ne 0 ]; then
+    echo "Error during mounting the remote path."
+    exit
+fi
+
 # create folder if it does not exist
-if [ ! -d $BACKUP_PATH ]; then
-    mkdir $BACKUP_PATH
+if [ ! -d "$BACKUP_PATH" ]; then
+    mkdir "$BACKUP_PATH"
 fi
 
 # check if dd is a symlink like in busybox
@@ -58,12 +66,17 @@ else
     dd if=/dev/mmcblk0 of=${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img bs=1MB status=progress
 fi
 
+if [ $? -ne 0 ]; then
+    echo "Error during backup of the system."
+    exit
+fi
+
 
 # delete old backups
 BACKUP_FILES_TO_DELETE_COUNT=$(ls -tr ${BACKUP_PATH}/${BACKUP_NAME}* | head -n -${BACKUP_COUNT} | wc -l)
 if [ "$BACKUP_FILES_TO_DELETE_COUNT" -ne "0" ]; then
     pushd ${BACKUP_PATH}; ls -tr ${BACKUP_PATH}/${BACKUP_NAME}* | head -n -${BACKUP_COUNT} | xargs rm; popd
-    echo -e "$BACKUP_FILES_TO_DELETE_COUNT old backups deleted"
+    echo -e "$BACKUP_FILES_TO_DELETE_COUNT old backups deleted."
 fi
 
 # unmount harddisk
