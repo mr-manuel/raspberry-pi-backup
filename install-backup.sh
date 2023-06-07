@@ -71,7 +71,7 @@ chmod +x $INSTALL_DIR/raspberry-pi-backup/ext/dd
 # copy mount.cifs if missing on system (like on Venus OS)
 if [ ! -f "/sbin/mount.cifs" ]; then
     echo "Copy missing \"mount.cifs\" to \"/sbin/mount.cifs\""
-    cp $INSTALL_DIR/raspberry-pi-backup/ext/mount.cifs /sbin
+    cp $INSTALL_DIR/raspberry-pi-backup/ext/sbin/mount.cifs /sbin
     chmod +x /sbin/mount.cifs
     chmod u+s /sbin/mount.cifs
 fi
@@ -79,9 +79,20 @@ fi
 # copy mount.nfs if missing on system (like on Venus OS)
 if [ ! -f "/sbin/mount.nfs" ]; then
     echo "Copy missing \"mount.nfs\" to \"/sbin/mount.nfs\""
-    cp $INSTALL_DIR/raspberry-pi-backup/ext/mount.nfs /sbin
+    cp $INSTALL_DIR/raspberry-pi-backup/ext/sbin/mount.nfs /sbin
     chmod +x /sbin/mount.nfs
     chmod u+s /sbin/mount.nfs
+fi
+
+# copy libcap-ng.so.0.0.0 if missing on system and create symbolic link (like on Venus OS not large)
+if [ ! -L "/lib/libcap-ng.so.0.0.0" ]; then
+    echo "Copy missing \"libcap-ng.so.0.0.0\" to \"/lib/libcap-ng.so.0.0.0\""
+    cp $INSTALL_DIR/raspberry-pi-backup/ext/lib/libcap-ng.so.0.0.0 /lib
+    chmod +x /lib/libcap-ng.so.0.0.0
+fi
+if [ ! -L "/lib/libcap-ng.so.0" ]; then
+    echo "Creating missing symbolic link \"/lib/libcap-ng.so.0\" to \"/lib/libcap-ng.so.0.0.0\""
+    ln -s "/lib/libcap-ng.so.0.0.0" "/lib/libcap-ng.so.0"
 fi
 
 echo ""
