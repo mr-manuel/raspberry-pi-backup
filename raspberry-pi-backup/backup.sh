@@ -44,13 +44,17 @@ fi
 mount -t cifs -o user=$BACKUP_REMOTE_MOUNT_USER,password=$BACKUP_REMOTE_MOUNT_PW,rw,file_mode=0777,dir_mode=0777 $BACKUP_REMOTE_MOUNT $BACKUP_MOUNT
 
 if [ $? -ne 0 ]; then
-    echo "Error during mounting the remote path."
+    echo "Error when mounting the remote path."
     exit
 fi
 
 # create folder if it does not exist
 if [ ! -d "$BACKUP_PATH" ]; then
-    mkdir "$BACKUP_PATH"
+    mkdir -p "$BACKUP_PATH"
+    if [ $? -ne 0 ]; then
+        echo "Error when creating of the backup folder on the remote path."
+        exit
+    fi
 fi
 
 # check if dd is a symlink like in busybox
@@ -67,7 +71,7 @@ else
 fi
 
 if [ $? -ne 0 ]; then
-    echo "Error during backup of the system."
+    echo "Error when backup of the system."
     exit
 fi
 
