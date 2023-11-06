@@ -114,7 +114,7 @@ fi
 
 
 # delete old backups
-BACKUP_FILES_TO_DELETE_COUNT=$(ls -tr ${BACKUP_PATH}/${BACKUP_NAME}* | head -n -${BACKUP_COUNT} | wc -l)
+BACKUP_FILES_TO_DELETE_COUNT=$(ls -tr ${BACKUP_PATH}/${BACKUP_NAME}* | head -n ${BACKUP_COUNT} | wc -l)
 if [ "$BACKUP_FILES_TO_DELETE_COUNT" -ne "0" ]; then
     pushd ${BACKUP_PATH} || exit
     ls -tr ${BACKUP_PATH}/${BACKUP_NAME}* | head -n ${BACKUP_COUNT} | xargs rm
