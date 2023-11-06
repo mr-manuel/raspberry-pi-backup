@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# script version 0.0.3 (2023.09.21)
+# script version 0.0.4 (2023.11.06)
 
 # uncomment for debugging
 #set -x
