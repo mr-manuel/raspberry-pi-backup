@@ -56,7 +56,7 @@ fi
 
 # mount harddisk
 echo "Mounting \"$BACKUP_REMOTE_MOUNT\" to \"$BACKUP_MOUNT\"..."
-mount -t cifs -o user=$BACKUP_REMOTE_MOUNT_USER,password=$BACKUP_REMOTE_MOUNT_PW,rw,file_mode=0777,dir_mode=0777 $BACKUP_REMOTE_MOUNT $BACKUP_MOUNT
+mount -t cifs -o user=$BACKUP_REMOTE_MOUNT_USER,password=$BACKUP_REMOTE_MOUNT_PW,rw,file_mode=0660,dir_mode=0660,nounix,noserverino $BACKUP_REMOTE_MOUNT $BACKUP_MOUNT
 
 if [ $? -ne 0 ]; then
     echo "Error when mounting the remote path."
