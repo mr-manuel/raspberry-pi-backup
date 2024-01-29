@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# script version 0.0.4 (2023.11.06)
+# script version 0.0.5 (2024.01.29)
 
 # uncomment for debugging
 #set -x
@@ -33,30 +33,30 @@ BACKUP_HOSTNAME="$(hostname)"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BACKUP_MOUNT="/mnt/backup"
-BACKUP_PATH="$BACKUP_MOUNT/$BACKUP_SUBFOLDER$BACKUP_HOSTNAME"
-BACKUP_NAME="Backup_$BACKUP_HOSTNAME"
+BACKUP_PATH="${BACKUP_MOUNT}/${BACKUP_SUBFOLDER}${BACKUP_HOSTNAME}"
+BACKUP_NAME="Backup_${BACKUP_HOSTNAME}"
 
 echo
 
 # create mount dir if not exists
-if [ ! -d $BACKUP_MOUNT ]; then
-    echo "$BACKUP_MOUNT does not exist. Creating folder..."
-    mkdir $BACKUP_MOUNT
+if [ ! -d ${BACKUP_MOUNT} ]; then
+    echo "${BACKUP_MOUNT} does not exist. Creating folder..."
+    mkdir ${BACKUP_MOUNT}
     echo
 fi
 
 # check if something is already mounted
-if [ 1 -eq "$(mount -v | grep -c $BACKUP_MOUNT)" ]; then
-    echo "WARNING: There is already mounted something to \"$BACKUP_MOUNT\". This will be unmounted now."
+if [ 1 -eq "$(mount -v | grep -c ${BACKUP_MOUNT})" ]; then
+    echo "WARNING: There is already mounted something to \"${BACKUP_MOUNT}\". This will be unmounted now."
     echo
-    mount -v | grep $BACKUP_MOUNT
-    umount $BACKUP_MOUNT
+    mount -v | grep ${BACKUP_MOUNT}
+    umount ${BACKUP_MOUNT}
     echo
 fi
 
 # mount harddisk
-echo "Mounting \"$BACKUP_REMOTE_MOUNT\" to \"$BACKUP_MOUNT\"..."
-mount -t cifs -o user=$BACKUP_REMOTE_MOUNT_USER,password=$BACKUP_REMOTE_MOUNT_PW,rw,file_mode=0660,dir_mode=0660,nounix,noserverino $BACKUP_REMOTE_MOUNT $BACKUP_MOUNT
+echo "Mounting \"${BACKUP_REMOTE_MOUNT}\" to \"${BACKUP_MOUNT}\"..."
+mount -t cifs -o user=${BACKUP_REMOTE_MOUNT_USER},password=${BACKUP_REMOTE_MOUNT_PW},rw,file_mode=0660,dir_mode=0660,nounix,noserverino ${BACKUP_REMOTE_MOUNT} ${BACKUP_MOUNT}
 
 if [ $? -ne 0 ]; then
     echo "Error when mounting the remote path."
@@ -66,9 +66,9 @@ fi
 echo
 
 # create folder if it does not exist
-if [ ! -d "$BACKUP_PATH" ]; then
-    echo "Creating \"$BACKUP_SUBFOLDER\" on backup mount..."
-    mkdir -p "$BACKUP_PATH"
+if [ ! -d "${BACKUP_PATH}" ]; then
+    echo "Creating \"${BACKUP_SUBFOLDER}\" on backup mount..."
+    mkdir -p "${BACKUP_PATH}"
     if [ $? -ne 0 ]; then
         echo "Error when creating of the backup folder on the remote path."
         echo
@@ -88,7 +88,7 @@ if [[ -L "/bin/dd" ]] || [[ -f "/opt/victronenergy/version" ]]; then
     fi
     # create backup
     echo "Using script dd for backup."
-    "$SCRIPT_DIR/ext/dd" if=/dev/mmcblk0 of="${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img" bs=1MB status=progress
+    "${SCRIPT_DIR}/ext/dd" if=/dev/mmcblk0 of="${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img" bs=1MB status=progress
 
 # if not use the system dd
 else
@@ -112,18 +112,34 @@ else
     exit
 fi
 
+# delete old backups if BACKUP_COUNT is greater than 0
+if [ "${BACKUP_COUNT}" -gt "0" ]; then
 
-# delete old backups
-BACKUP_FILES_TO_DELETE_COUNT=$(ls -tr ${BACKUP_PATH}/${BACKUP_NAME}* | head -n ${BACKUP_COUNT} | wc -l)
-if [ "$BACKUP_FILES_TO_DELETE_COUNT" -ne "0" ]; then
-    pushd ${BACKUP_PATH} || exit
-    ls -tr ${BACKUP_PATH}/${BACKUP_NAME}* | head -n ${BACKUP_COUNT} | xargs rm
-    popd || exit
-    echo -e "$BACKUP_FILES_TO_DELETE_COUNT old backups deleted."
+    # increment count by one to delete files after count
+    ((BACKUP_COUNT++))
+
+    # delete old backups
+    BACKUP_FILES_TO_DELETE_COUNT=$(ls -t ${BACKUP_PATH}/${BACKUP_NAME}* | tail -n +${BACKUP_COUNT} | wc -l)
+    if [ "${BACKUP_FILES_TO_DELETE_COUNT}" -ne "0" ]; then
+
+        echo "Found this files to delete:"
+        ls -t ${BACKUP_PATH}/${BACKUP_NAME}* | tail -n +${BACKUP_COUNT}
+
+        # switch to backup folder and remember current folder
+        pushd ${BACKUP_PATH} || exit
+
+
+        # list files, remove newest files and delete the rest
+        ls -t ${BACKUP_PATH}/${BACKUP_NAME}* | tail -n +${BACKUP_COUNT} | xargs rm
+
+        popd || exit
+        echo -e "${BACKUP_FILES_TO_DELETE_COUNT} old backups deleted."
+    fi
+
 fi
 
 # unmount harddisk
-umount $BACKUP_MOUNT
+umount ${BACKUP_MOUNT}
 
 if [ $? -ne 0 ]; then
     echo "Error when unmounting the remote path."
