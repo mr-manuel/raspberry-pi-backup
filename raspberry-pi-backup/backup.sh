@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# script version 0.0.5 (2024.01.29)
+# script version 0.0.6 (2024.08.29)
 
 # uncomment for debugging
 #set -x
@@ -27,6 +27,12 @@ BACKUP_COUNT="5"
 
 # backup hostname (default gets the hostname from the system)
 BACKUP_HOSTNAME="$(hostname)"
+
+# device to backup
+# SD card: "/dev/mmcblk0"
+# USB stick: "/dev/sda"
+# NVMe: "/dev/nvme0n1"
+BACKUP_DEVICE="/dev/mmcblk0"
 ################### CONFIG | END ###################
 
 
@@ -81,26 +87,26 @@ fi
 # if yes then probably the argument "status=progress" will not work, use own dd
 if [[ -L "/bin/dd" ]] || [[ -f "/opt/victronenergy/version" ]]; then
     # check if backup is already running
-    if [ "$(ps | grep -c 'dd if=/dev/mmcblk0')" -gt 1 ]; then
+    if [ $(pgrep "dd if=$BACKUP_DEVICE") -gt 1 ]; then
         echo "Backup already running. Exiting..."
         echo
         exit
     fi
     # create backup
     echo "Using script dd for backup."
-    "${SCRIPT_DIR}/ext/dd" if=/dev/mmcblk0 of="${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img" bs=1MB status=progress
+    "${SCRIPT_DIR}/ext/dd" if=$BACKUP_DEVICE of="${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img" bs=1MB status=progress
 
 # if not use the system dd
 else
     # check if backup is already running
-    if [ "$(ps -aux | grep -c 'dd if=/dev/mmcblk0')" -gt 1 ]; then
+    if [ $(pgrep "dd if=$BACKUP_DEVICE") -gt 1 ]; then
         echo "Backup already running. Exiting..."
         echo
         exit
     fi
     # create backup
     echo "Using system dd for backup."
-    /bin/dd if=/dev/mmcblk0 of="${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img" bs=1MB status=progress
+    /bin/dd if=$BACKUP_DEVICE of="${BACKUP_PATH}/${BACKUP_NAME}_$(date +%Y%m%d_%H%M%S).img" bs=1MB status=progress
 fi
 
 if [ $? -eq 0 ]; then
