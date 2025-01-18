@@ -5,39 +5,45 @@
 # uncomment for debugging
 #set -x
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 ################## CONFIG | START ##################
-# specify the remote mount
-BACKUP_REMOTE_MOUNT="//192.168.1.1/sharename"
+if [ -f $SCRIPT_DIR/backup.conf ]; then
+  # read local configuration
+  . $SCRIPT_DIR/backup.conf
+else
+  # specify the remote mount
+  BACKUP_REMOTE_MOUNT="//192.168.1.1/sharename"
 
-# specify a subfolder (with ending /) if needed, else
-# leave completely empty
-# NOTE: an additional subfolder with the hostname of
-#       the device is automatically created
-BACKUP_SUBFOLDER="Backups/"
+  # specify a subfolder (with ending /) if needed, else
+  # leave completely empty
+  # NOTE: an additional subfolder with the hostname of
+  #       the device is automatically created
+  BACKUP_SUBFOLDER="Backups/"
 
-# specify the username for the remote mount
-BACKUP_REMOTE_MOUNT_USER="username"
+  # specify the username for the remote mount
+  BACKUP_REMOTE_MOUNT_USER="username"
 
-# specify the password for the remote mount
-BACKUP_REMOTE_MOUNT_PW="password"
+  # specify the password for the remote mount
+  BACKUP_REMOTE_MOUNT_PW="password"
 
-# how may backups should be kept?
-# Use 0 to disable old backup deletion
-BACKUP_COUNT="5"
+  # how may backups should be kept?
+  # Use 0 to disable old backup deletion
+  BACKUP_COUNT="5"
 
-# backup hostname (default gets the hostname from the system)
-BACKUP_HOSTNAME="$(hostname)"
+  # backup hostname (default gets the hostname from the system)
+  BACKUP_HOSTNAME="$(hostname)"
 
-# device to backup
-# SD card: "/dev/mmcblk0"
-# USB stick: "/dev/sda"
-# NVMe: "/dev/nvme0n1"
-BACKUP_DEVICE="/dev/mmcblk0"
+  # device to backup
+  # SD card: "/dev/mmcblk0"
+  # USB stick: "/dev/sda"
+  # NVMe: "/dev/nvme0n1"
+  BACKUP_DEVICE="/dev/mmcblk0"
+fi
 ################### CONFIG | END ###################
 
 
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BACKUP_MOUNT="/mnt/backup"
 BACKUP_PATH="${BACKUP_MOUNT}/${BACKUP_SUBFOLDER}${BACKUP_HOSTNAME}"
 BACKUP_NAME="Backup_${BACKUP_HOSTNAME}"
