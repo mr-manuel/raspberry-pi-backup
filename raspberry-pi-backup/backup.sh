@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# script version 0.0.6 (2024.08.29)
+# script version 0.0.7 (2025.01.28)
 
 # uncomment for debugging
 #set -x
@@ -87,7 +87,8 @@ fi
 # if yes then probably the argument "status=progress" will not work, use own dd
 if [[ -L "/bin/dd" ]] || [[ -f "/opt/victronenergy/version" ]]; then
     # check if backup is already running
-    if [ $(pgrep "dd if=$BACKUP_DEVICE") -gt 1 ]; then
+    pgrep_output=$(pgrep "dd if=$BACKUP_DEVICE")
+    if [ -n "$pgrep_output" ] && [ "$pgrep_output" -gt 1 ]; then
         echo "Backup already running. Exiting..."
         echo
         exit
@@ -99,7 +100,8 @@ if [[ -L "/bin/dd" ]] || [[ -f "/opt/victronenergy/version" ]]; then
 # if not use the system dd
 else
     # check if backup is already running
-    if [ $(pgrep "dd if=$BACKUP_DEVICE") -gt 1 ]; then
+    pgrep_output=$(pgrep "dd if=$BACKUP_DEVICE")
+    if [ -n "$pgrep_output" ] && [ "$pgrep_output" -gt 1 ]; then
         echo "Backup already running. Exiting..."
         echo
         exit

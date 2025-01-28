@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.7
+* Changed: Fixed comparison error [issue#13](https://github.com/mr-manuel/raspberry-pi-backup/issues/13)
+
 ## 0.0.6
 * Added: Specify what device to backup
 
