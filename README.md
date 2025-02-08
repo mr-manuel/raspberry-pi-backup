@@ -23,7 +23,7 @@ NOTE: It's not possible to change the used method to not backup empty blocks. Th
 
 ### Config
 
-Change the variables in the `backup.sh` script with `nano`, `vi`, `vim` or the editor of your choise.
+Copy the `backup.sample.conf` to `backup.conf` and change the variables in the `backup.conf` with `nano`, `vi`, `vim` or the editor of your choise.
 
 Standard install path `/opt/raspberry-pi-backup`
 
