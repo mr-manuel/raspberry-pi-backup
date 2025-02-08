@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# specify the remote mount
+BACKUP_REMOTE_MOUNT="//192.168.1.1/sharename"
+
+# specify a subfolder (with ending /) if needed, else
+# leave completely empty
+# NOTE: an additional subfolder with the hostname of
+#       the device is automatically created
+BACKUP_SUBFOLDER="Backups/"
+
+# specify the username for the remote mount
+BACKUP_REMOTE_MOUNT_USER="username"
+
+# specify the password for the remote mount
+BACKUP_REMOTE_MOUNT_PW="password"
+
+# how may backups should be kept?
+# Use 0 to disable old backup deletion
+BACKUP_COUNT="5"
+
+# backup hostname (default gets the hostname from the system)
+BACKUP_HOSTNAME="$(hostname)"
+
+# device to backup
+# SD card: "/dev/mmcblk0"
+# USB stick: "/dev/sda"
+# NVMe: "/dev/nvme0n1"
+BACKUP_DEVICE="/dev/mmcblk0"
