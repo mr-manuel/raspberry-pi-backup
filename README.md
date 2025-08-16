@@ -40,7 +40,7 @@ Venus OS install path `/data/etc/raspberry-pi-backup`
 
 2. Modify the needed parameters by changing the `backup.sh` script.
 
-3. Run the script on demand or setup a cronjob, if you want to run the backup automatically. You can use the [Contab Generator](https://crontab-generator.org/).
+3. Run the script on demand or setup a cronjob, if you want to run the backup automatically. You can use the [Crontab Generator](https://crontab-generator.org/).
 
     Command to execute:
 
