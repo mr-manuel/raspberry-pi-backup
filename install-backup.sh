@@ -37,7 +37,7 @@ fi
 
 # download latest copy of repository
 echo "Download latest version..."
-wget -P /tmp https://github.com/mr-manuel/raspberry-pi-backup/archive/refs/heads/master.zip
+wget -P /tmp https://github.com/eckonator/raspberry-pi-backup/archive/refs/heads/master.zip
 
 if [ $? -ne 0 ]; then
     echo "Error during downloading the file."
