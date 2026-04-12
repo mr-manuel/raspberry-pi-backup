@@ -66,6 +66,14 @@ if [ 1 -eq "$(mount -v | grep -c ${BACKUP_MOUNT})" ]; then
     echo
 fi
 
+# check if mount.cifs is available
+if [ ! -f "/sbin/mount.cifs" ]; then
+    echo "Error: \"/sbin/mount.cifs\" not found. The \"cifs-utils\" package is required to mount CIFS/SMB shares."
+    echo "Please install it with: sudo apt-get install cifs-utils"
+    echo "Alternatively, run the install script to set up all dependencies automatically."
+    exit 1
+fi
+
 # mount harddisk
 echo "Mounting \"${BACKUP_REMOTE_MOUNT}\" to \"${BACKUP_MOUNT}\"..."
 mount -t cifs -o user=${BACKUP_REMOTE_MOUNT_USER},password=${BACKUP_REMOTE_MOUNT_PW},rw,file_mode=0660,dir_mode=0660,nounix,noserverino ${BACKUP_REMOTE_MOUNT} ${BACKUP_MOUNT}
