@@ -67,8 +67,8 @@ if [ 1 -eq "$(mount -v | grep -c ${BACKUP_MOUNT})" ]; then
 fi
 
 # check if mount.cifs is available
-if [ ! -f "/sbin/mount.cifs" ]; then
-    echo "Error: \"/sbin/mount.cifs\" not found. The \"cifs-utils\" package is required to mount CIFS/SMB shares."
+if ! command -v mount.cifs &> /dev/null; then
+    echo "Error: \"mount.cifs\" not found. The \"cifs-utils\" package is required to mount CIFS/SMB shares."
     echo "Please install it with: sudo apt-get install cifs-utils"
     echo "Alternatively, run the install script to set up all dependencies automatically."
     exit 1
